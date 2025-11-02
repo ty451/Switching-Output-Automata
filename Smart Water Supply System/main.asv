@@ -1,0 +1,147 @@
+%2 power consumption levels of valve V1
+WV11 = 1; 
+WV12 = 2;
+
+%2 power consumption levels of valve V2
+WV21 = 1; 
+WV22 = 2;
+
+%2 power consumption levels of valve V3
+WV31 = 1;
+WV32 = 2;
+
+%2 power consumption levels of pump P1
+WP1_c = 0;
+WP1_o = 3;
+
+%2 power consumption levels of pump P2
+WP2_c = 0;
+WP2_o = 3;
+
+%P1,P2 close
+W1 = WV11 + WV31 + WP1_c + WP2_c +WV22;
+W2 = WV12 + WV31 + WP1_c + WP2_c +WV22;
+W3 = WV12 + WV32 + WP1_c + WP2_c +WV22;
+W2_1 = WV11 + WV32 + WP1_c + WP2_c +WV22;
+
+%P1 open, P2 close
+W41 = WV11 + WV31 + WP1_o + WP2_c +WV22;
+W51 = WV12 + WV31 + WP1_o + WP2_c +WV22;
+W61 = WV12 + WV32 + WP1_o + WP2_c +WV22;
+W51_1 = WV11 + WV32 + WP1_o + WP2_c +WV22;
+
+%P1 close ,P2 open
+W42 = WV11 + WV31 + WP1_c + WP2_o +WV22;
+W52 = WV12 + WV31 + WP1_c + WP2_o +WV22;
+W62 = WV12 + WV32 + WP1_c + WP2_o +WV22;
+W52_1 = WV11 + WV32 + WP1_c + WP2_o +WV22;
+
+%P1,P2 open
+W7 = WV11 + WV31 + WP1_o + WP2_o +WV22;
+W8 = WV12 + WV31 + WP1_o + WP2_o +WV22;
+W9 = WV12 + WV32 + WP1_o + WP2_o +WV22;
+W8_1 = WV11 + WV32 + WP1_o + WP2_o +WV22;
+
+%set of states 
+G.X = {'x1','x2','x3','x4','x5','x6','x7','x8','x9','x10','x11','x12','x13','x14','x15','x16','x17','x18'};
+
+%output alphabet
+G.Y = {W1,W2,W2_1,W3,W41,W42,W51,W51_1,W52,W52_1,W61,W62,W7,W8,W8_1,W9};
+G.Y = unique(cell2mat(G.Y));
+G.Y = num2cell(G.Y);
+
+%output set of state x_i (i=1...16)
+W_x1 = unique([W7,W8,W9,W8_1]);
+
+W_x2 = unique([W41,W51,W61,W51_1]);
+
+W_x3 = unique([W1,W2,W3,W2_1]);
+
+W_x4 = unique([W42,W52,W62,W52_1]);
+
+W_x5 = unique([W7,W8,W9,W8_1]);
+
+W_x6 = unique([W41,W51,W61,W51_1]);
+
+W_x7 = unique([W1,W2,W3,W2_1]);
+
+W_x8 = unique([W42,W52,W62,W52_1]);
+
+W_x9 = unique([W7,W8,W9,W8_1]);
+
+W_x10 = unique([W41,W51,W61,W51_1]);
+
+W_x11 = unique([W1,W2,W3,W2_1]);
+
+W_x12 = unique([W42,W52,W62,W52_1]);
+
+W_x13 = unique([W9,W8_1]);
+
+W_x14 = unique([W61,W51_1]);
+
+W_x15 = unique([W2_1,W3]);
+
+W_x16 = unique([W62,W52_1]);
+
+%output function
+G.h = containers.Map({'x1','x2','x3','x4','x5','x6','x7','x8','x9','x10','x11','x12','x13','x14','x15','x16'}, ...
+    {W_x1,W_x2,W_x3,W_x4,W_x5,W_x6,W_x7,W_x8,W_x9,W_x10,W_x11,W_x12,W_x13,W_x14,W_x15,W_x16});
+
+%set of arcs
+G.B = {'x1', 'x2'; 'x1', 'x4'; 'x1', 'x5'; 
+    'x2', 'x1'; 'x2', 'x3'; 'x2', 'x6'; 
+    'x3', 'x2'; 'x3', 'x4'; 'x3', 'x7';
+    'x4', 'x1'; 'x4', 'x3'; 'x4', 'x8'; 
+    'x5', 'x1'; 'x5', 'x6'; 'x5', 'x8'; 'x5', 'x9';
+    'x6', 'x2'; 'x6', 'x5'; 'x6', 'x7'; 'x6', 'x10';
+    'x7', 'x3'; 'x7', 'x6'; 'x7', 'x8'; 'x7', 'x11';
+    'x8', 'x4'; 'x8', 'x5'; 'x8', 'x7'; 'x8', 'x12';
+    'x9', 'x5'; 'x9', 'x10'; 'x9', 'x12';
+    'x10', 'x6'; 'x10', 'x9'; 'x10', 'x11'; 'x10', 'x14';
+    'x11', 'x7'; 'x11', 'x10'; 'x11', 'x12'; 'x11', 'x15';
+    'x12', 'x8'; 'x12', 'x9'; 'x12', 'x11'; 
+    'x13', 'x9'; 'x13', 'x14'; 'x13', 'x16';
+    'x14', 'x13'; 'x14', 'x15'; 
+    'x15', 'x14'; 'x15', 'x16';
+    'x16', 'x12'; 'x16', 'x13'; 'x16', 'x15'};
+
+%secret set
+G.S = {'x13','x14','x15','x16'};
+
+%%
+%Specify the initial state and output to verify current state opacity
+
+
+%initial state and initial output
+G.x0 = 'x10';
+G.y0 = 7;
+
+%evolution automaton
+Ge = construct_evolution_automaton(G)
+
+%observer
+Gobs = construct_observer(G,Ge)
+write_data_to_files(Ge,Gobs);
+
+%verify current state opacity
+[CSO,unopacue_array] = verify_CSO(G,Gobs)
+
+
+
+%%
+%Set all states except the secret state to the initial state, and verify the corresponding current state opacity.
+
+%{
+
+parpool(8); 
+result_cso = calculateCSOResult(G);
+
+%}
+
+
+
+
+
+
+
+
